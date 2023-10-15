@@ -20,9 +20,9 @@ class ChooseModel extends BaseModel {
   DateTime focusedDay = DateTime.now();
   List<Batchs> batchList = [];
 
-  int selectedGrade = 0;
+  GradeData selectedGrade = GradeData(id: 00,name: '',batchs: []);
   int selectedBatch = 0;
-
+  String selectedBatchName = "";
   bool step0 = true ;
   bool step1 = false ;
   bool step2 = false ;
@@ -30,22 +30,21 @@ class ChooseModel extends BaseModel {
   int currentStep = 0;
 
 
-  Future getGrade(String date) async {
+  Future getGrade() async {
     try {
-      setState(ViewState.busy);
-      print(date);
-      var gradeObj = await _api.getGrade(ApiService.userID, date);
+      print(selectedDate);
+      var gradeObj = await _api.getGrade(ApiService.userID, selectedDate);
 
       if (gradeObj.result != null && gradeObj.result!.success! == true) {
         gradeList = gradeObj.result!.gradeData!;
         filteredGrade.addAll(gradeList);
-        nextStep();
       } else {
         print("444");
       }
-      setState(ViewState.idle);
+      print("4441");
+      notifyListeners();
     } catch (e) {
-      setState(ViewState.idle);
+      notifyListeners();
     }
   }
 
@@ -89,92 +88,42 @@ class ChooseModel extends BaseModel {
 
 
   setDateSelected(DateTime date) {
+    filteredGrade.clear();
+    batchList.clear();
+    selectedGrade = GradeData(id: 00,name: '',batchs: []);
+    selectedBatchName = "";
     focusedDay = date;
     String formattedDate =
     DateFormat('yyyy-MM-dd').format(date);
-    getGrade(formattedDate);
+
     selectedDate = formattedDate;
-    notifyListeners();
+    getGrade();
+
   }
-  setGradeSelected(int select) {
+
+  setGradeSelected(GradeData select) {
+    batchList.clear();
     selectedGrade = select;
+    for(var i in  filteredGrade){
+      if(select.id == i.id){
+        batchList.addAll(i.batchs!);
+        break;
+      }
+    }
+    print("4442");
+    print(batchList.length);
     notifyListeners();
   }
 
-  setBatchListSelected(List<Batchs> list) {
-    // batchList.clear();
-    batchList = list;
-    notifyListeners();
-  }
-  setBatchSelected(int select) {
+  // setBatchListSelected(List<Batchs> list) {
+  //    batchList.clear();
+  //   batchList.addAll(list);
+  //   notifyListeners();
+  // }
+  setBatchSelected(int select,String name) {
     selectedBatch = select;
+    selectedBatchName = name;
     notifyListeners();
   }
 
-  previousStep(){
-    switch(currentStep)
-    {
-      case 0 :
-        step0 = true;
-        step1 = false;
-        step2 = false ;
-        currentStep = 0;
-        break;
-      case 1 :
-        step0 = true;
-        step1 = false;
-        step2 = false ;
-        currentStep = 0;
-        break;
-      case 2 :
-        step0 = false;
-        step1 = true;
-        step2 = false ;
-        currentStep = 1;
-        break;
-    }
-    notifyListeners();
-  }
-
-  nextStep(){
-    switch(currentStep)
-    {
-      case 0 :
-        if(selectedDate.isEmpty){
-
-          setDateSelected(DateTime.now());
-          print(focusedDay.day);
-        }else{
-            step0 = false;
-            step1 = true;
-            step2 = false ;
-            currentStep = 1;
-
-        }
-
-        break;
-      case 1 :
-        if(selectedGrade == 0){
-          SnackbarShare.showMessage(Strings.chooseGrade);
-        }else{
-          step0 = false;
-          step1 = false;
-          step2 = true ;
-          currentStep = 2;
-        }
-        break;
-      case 2 :
-        if(selectedGrade == 0){
-          SnackbarShare.showMessage(Strings.chooseBatch);
-        }else{
-          step0 = false;
-          step1 = false;
-          step2 = false ;
-          currentStep = 2;
-        }
-        break;
-
-    }
-    notifyListeners();
-  }
 }

@@ -48,7 +48,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                       color: theme.primaryColor,
                       size: 30,
                       secondRingColor: theme.hintColor,
-                      thirdRingColor: theme.primaryColor.withOpacity(0.5)))
+                      thirdRingColor: theme.hintColor.withOpacity(0.5)))
               : mainWidget(model, theme);
         });
   }
@@ -62,7 +62,6 @@ class _FillAttendeeState extends State<FillAttendee> {
             textDirection: TextDirection.rtl,
             child: Column(
               children: [
-
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.09,
                   child: Padding(
@@ -98,17 +97,22 @@ class _FillAttendeeState extends State<FillAttendee> {
                           children: [
                             CheckboxListTile(
                               contentPadding: const EdgeInsets.all(6),
-                              title:  Align(
+                              title: Align(
                                 alignment: Alignment.topRight,
-                                child:
-                                        Text(
-                                          model.filterStudents[index].name.toString(),
-                                          style: theme.textTheme.bodyLarge,
-                                        ),
-
+                                child: Text(
+                                  model.filterStudents[index].name.toString(),
+                                  style: theme.textTheme.bodyLarge,
+                                ),
                               ),
                               value: model.selectedStudents
                                   .contains(model.filterStudents[index]),
+                        secondary:    model.unSelectedStudents
+                            .contains(model.students[index])
+                            ?  const Icon(Icons.cancel_rounded,color: Colors.redAccent,size: 20,)   :      const CircleAvatar(
+                        backgroundColor: Colors.green,
+                        radius: 8,
+                        child:  Icon(Icons.done,color: Colors.white,size: 15,),
+                        ),
                               onChanged: (bool? value) async {
                                 if (model.selectedStudents
                                     .contains(model.filterStudents[index])) {
@@ -152,26 +156,24 @@ class _FillAttendeeState extends State<FillAttendee> {
                                           onChanged: (String? value) {
                                             model.setSelectedReason(
                                                 value!, index);
-
-                                            // String rsn = returnReasonKey(
-                                            //     reasons.indexOf(value!));
-                                            // model
-                                            //     .setAbsent(
-                                            //     model.unSelectedStudents[index].id!,
-                                            //     rsn)
-                                            //     .then((success) {
-                                            //   if (success == true) {
-                                            //     setState(() {
-                                            //       model.unSelectedStudents[index]
-                                            //           .state = "absent";
-                                            //       model.unSelectedStudents[index]
-                                            //           .aicskAbsentReason = rsn;
-                                            //       print(rsn);
-                                            //     });
-                                            //   } else {
-                                            //     SnackbarShare.showMessage(
-                                            //         Strings.systemError);
-                                            //   }
+                                            if (value.isNotEmpty) {
+                                              String rsn = returnReasonKey(model
+                                                  .reasons
+                                                  .indexOf(value));
+                                              model
+                                                  .setAbsent(
+                                                      model.students[index].id!,
+                                                      rsn)
+                                                  .then((success) {
+                                                if (success == false) {
+                                                  SnackbarShare.showMessage(
+                                                      Strings.systemError);
+                                                }
+                                              });
+                                            } else {
+                                              SnackbarShare.showMessage(
+                                                  Strings.absentReason);
+                                            }
                                           },
                                           items: model.reasons
                                               .map<DropdownMenuItem<String>>(
@@ -191,14 +193,13 @@ class _FillAttendeeState extends State<FillAttendee> {
                                       ],
                                       // ),
                                     )
-                                  :  SizedBox(),
-
+                                  : const SizedBox(),
                               controlAffinity: ListTileControlAffinity.trailing,
                               activeColor: theme.primaryColor,
                               checkboxShape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15)),
                             ),
-                            Divider(),
+                            const Divider(),
                           ],
                         );
                       },
@@ -209,39 +210,55 @@ class _FillAttendeeState extends State<FillAttendee> {
                     flex: 1,
                     child: Column(
                       children: [
-                        Divider(),
+                        const Divider(),
                         Padding(
-                          padding: const EdgeInsets.only(right: 35),
+                          padding: const EdgeInsets.only(right: 25),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Row(
                                 children: [
+                                  const CircleAvatar(
+                                    backgroundColor: Colors.green,
+                                    radius: 8,
+                                    child:  Icon(Icons.done,color: Colors.white,size: 15,),
+                                  ),
+
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
                                   Text(
                                     "عدد الحضور",
                                     style: theme.textTheme.bodyLarge,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
                                     model.selectedStudents.length.toString(),
-                                    style: theme.textTheme.bodyLarge,
+                                    style: TextStyle(color: Colors.green,fontSize: 15,fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
+                              const SizedBox(
+                                height: 2,
+                              ),
                               Row(
                                 children: [
+                                  const Icon(Icons.cancel_rounded,color: Colors.redAccent,size: 20,),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
                                   Text(
                                     "عدد الغياب",
                                     style: theme.textTheme.bodyLarge,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
                                     "${model.students.length - model.selectedStudents.length}",
-                                    style: theme.textTheme.bodyLarge,
+                                    style: TextStyle(color: Colors.redAccent,fontSize: 15,fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -314,7 +331,6 @@ class _FillAttendeeState extends State<FillAttendee> {
                             ),
                           ],
                         ),
-
                       ],
                     )),
               ],
@@ -322,15 +338,15 @@ class _FillAttendeeState extends State<FillAttendee> {
   }
 
   String returnReasonKey(int index) {
-    String reason = "travel";
+    String reason = "other";
     switch (index) {
-      case 0:
-        reason = "illness";
       case 1:
-        reason = "travel";
+        reason = "illness";
       case 2:
-        reason = "day_off";
+        reason = "travel";
       case 3:
+        reason = "day_off";
+      case 4:
         reason = "other";
     }
     return reason;

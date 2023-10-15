@@ -18,10 +18,7 @@ class LoginModel extends BaseModel {
 
   // bool isFirst = ApiService.isFirstOpen;
 
-  changeState() {
-    setState(ViewState.busy);
-    setState(ViewState.idle);
-  }
+
 
   setAuth(String sessionID) {
     auth = sessionID;

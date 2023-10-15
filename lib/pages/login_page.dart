@@ -67,7 +67,6 @@ class _LoginPageState extends State<LoginPage> {
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: SizedBox(
-
                                   width: double.maxFinite,
                                   height: MediaQuery.of(context).size.height * 0.3,
                                   child: CustomPaint(
@@ -173,7 +172,8 @@ class _LoginPageState extends State<LoginPage> {
       passwordController.text,
       context,
     ).then((value) {
-
+      FocusManager.instance.primaryFocus
+          ?.unfocus();
       if (value == true) {
         // model.changeState();
         Navigator.pushReplacement(

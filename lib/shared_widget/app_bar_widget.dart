@@ -15,7 +15,7 @@ class AppBarWidget {
 
   static PreferredSizeWidget mainAppBarSharedWidget() {
     return AppBar(
-
+title: Text("الحضور والغياب", style: TextStyle(color: Colors.white,fontSize: 18,fontFamily: 'Tajawal'),),
 
       leading: Visibility(
           visible: (Navigator.canPop(_context!) == true ? true : false) && _showBack == true,

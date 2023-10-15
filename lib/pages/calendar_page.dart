@@ -1,15 +1,19 @@
 import 'package:attendance/core/viewModels/choose_model.dart';
 import 'package:attendance/pages/fill_attendee.dart';
+import 'package:attendance/shared_widget/curve_bottom.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../constants/app_strings.dart';
+import '../core/model/grade_model.dart';
 import '../core/viewstate.dart';
 import '../shared_widget/app_bar_widget.dart';
 import '../shared_widget/button_widget.dart';
+import '../shared_widget/circule_paint.dart';
+import '../shared_widget/curve_top.dart';
 import '../shared_widget/snackbar.dart';
 import '../shared_widget/text_field_widget.dart';
 import 'base_view.dart';
@@ -39,7 +43,7 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return BaseView<ChooseModel>(
-        onModelReady: (model) => model.selectedDate,
+        onModelReady: (model) => model.setDateSelected(DateTime.now()),
         builder: (context, model, child) {
           return model.state == ViewState.busy
               ? Container(
@@ -51,12 +55,14 @@ class _CalendarPageState extends State<CalendarPage> {
                       color: theme.primaryColor,
                       size: 30,
                       secondRingColor: theme.hintColor,
-                      thirdRingColor: theme.primaryColor.withOpacity(0.5)))
+                      thirdRingColor: theme.hintColor.withOpacity(0.5)))
               : mainWidget(model, theme);
         });
   }
 
   Widget mainWidget(ChooseModel model, ThemeData theme) {
+
+
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBarWidget.mainAppBarSharedWidget(),
@@ -64,290 +70,256 @@ class _CalendarPageState extends State<CalendarPage> {
         body: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            Container(
-                color: Colors.white,
-                height: MediaQuery.of(context).size.height * 0.12,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.35,
-                      child: SharedButton(
-                        buttonLabel:
-                            model.step2 != true ? Strings.next : Strings.save,
-                        onClick: () {
-                          if (model.step2 == true) {
-                            if (model.selectedBatch == 0) {
-                              SnackbarShare.showMessage(Strings.chooseBatch);
-                            } else {
-                              model.getAttendeeSheet().then((sheet) {
-                                if (sheet != null &&
-                                    sheet.students != null &&
-                                    sheet.students!.isNotEmpty) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            FillAttendee(obj: sheet)),
-                                  );
-                                } else {
-                                  SnackbarShare.showMessage(
-                                      Strings.noAvailableSheet);
-                                }
-                              });
-                            }
-                          } else {
-                            model.nextStep();
-                          }
-                        },
-                        color: model.step2 != true
-                            ? theme.hintColor
-                            : theme.primaryColor,
-                        canClick: true,
-                        msgCantClick: "",
-                      ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.35,
-                      child: SharedButton(
-                        buttonLabel: 'السابق',
-                        onClick: () {
-                          model.previousStep();
-                        },
-                        color: theme.hintColor,
-                        canClick: model.step0 == true ? false : true,
-                        msgCantClick: Strings.cantPrevStep,
-                      ),
-                    ),
-                  ],
-                )),
+            SizedBox(
+              width: double.maxFinite,
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: CustomPaint(
+                painter: CirclePainter(),
+              ),
+            ),
             Column(
               children: [
-                Visibility(
-                    visible: model.step0 == true,
-                    child: Align(
-                        alignment: Alignment.topRight,
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            Text(
-                              "يرجى تحديد التاريخ ",
-                              style: theme.textTheme.displayMedium,
-                            ),
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            TableCalendar(
-                              firstDay: DateTime.utc(1990, 01, 01),
-                              lastDay: DateTime.utc(2222, 01, 01),
-                              focusedDay: model.focusedDay,
-                              selectedDayPredicate: (day) =>
-                                  isSameDay(model.focusedDay, day),
-                              calendarFormat: _calendarFormat,
-                              // eventLoader: (day) {
-                              //
-                              //   if(model.focusedDay == day){
-                              //     return model.fillEvent(controller.index);
-                              //   }else{
-                              //     return [] ;
-                              //   }
-                              //
-                              // },
-                              locale:
-                                  Localizations.localeOf(context).languageCode,
-                              startingDayOfWeek: StartingDayOfWeek.sunday,
-                              calendarStyle: CalendarStyle(
-                                todayDecoration: BoxDecoration(
-                                  color: theme.hintColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                selectedDecoration: BoxDecoration(
-                                  color: theme.primaryColor,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              onDaySelected:
-                                  (DateTime selectedDay, DateTime focusedDay) {
-                                onDaySelected(selectedDay, focusedDay, model);
-                              },
-
-                              onPageChanged: (focusedDay) {
-                                model.focusedDay = focusedDay;
-                              },
-                            ),
-                            // OutlinedButton(
-                            //         onPressed: () async {
-                            //           DateTime? pickedDate = await showDatePicker(
-                            //               context: context,
-                            //               builder: (context, child) {
-                            //                 return Theme(
-                            //                   data: Theme.of(context).copyWith(
-                            //                     colorScheme: ColorScheme.light(
-                            //                       primary: theme.primaryColor,
-                            //                       // header background color
-                            //                       onPrimary: Colors.white,
-                            //                       // header text color
-                            //                       onSurface:
-                            //                           Colors.black, // body text color
-                            //                     ),
-                            //                     textButtonTheme: TextButtonThemeData(
-                            //                       style: TextButton.styleFrom(
-                            //                         primary:
-                            //                             Colors.black, // button text color
-                            //                       ),
-                            //                     ),
-                            //                   ),
-                            //                   child: child!,
-                            //                 );
-                            //               },
-                            //               initialDate: DateTime.now(),
-                            //               //get today's date
-                            //               firstDate: DateTime(2000),
-                            //               //DateTime.now() - not to allow to choose before today.
-                            //               lastDate: DateTime(2101));
-                            //
-                            //           if (pickedDate != null) {
-                            //             String formattedDate =
-                            //                 DateFormat('yyyy-MM-dd').format(pickedDate);
-                            //             model.getGrade(formattedDate);
-                            //             model.setDateSelected(formattedDate);
-                            //
-                            //           } else {
-                            //             print("Date is not selected");
-                            //           }
-                            //         },
-                            //         style: OutlinedButton.styleFrom(
-                            //           side: BorderSide(width: 2, color: theme.primaryColor),
-                            //         ),
-                            //         child: const Text(
-                            //           Strings.chooseDate,
-                            //           style: TextStyle(
-                            //               fontSize: 13,
-                            //               fontWeight: FontWeight.bold,
-                            //               fontFamily: "Cairo",
-                            //               color: Colors.black),
-                            //         ),
-                            //
-                            //     ),
-                          ],
-                        ))),
-                Visibility(
-                    visible: model.step1 == true,
+                Align(
+                    alignment: Alignment.topRight,
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.09,
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
                           child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: SharedEditText(
-                              textEditingController: searchController,
-                              label: Strings.search,
-                              icon: const Icon(
-                                Icons.search,
-                                size: 20,
-                              ),
-                              onChange: model.filterList,
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Text(
+                              "  التاريخ #",
+                              style: TextStyle(
+                                  color: theme.primaryColor, fontSize: 20),
                             ),
                           ),
                         ),
-                        chooseGrade(theme, model),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TableCalendar(
+                          firstDay: DateTime.utc(1990, 01, 01),
+                          lastDay: DateTime.utc(2222, 01, 01),
+                          focusedDay: model.focusedDay,
+                          selectedDayPredicate: (day) =>
+                              isSameDay(model.focusedDay, day),
+                          calendarFormat: _calendarFormat,
+                          // eventLoader: (day) {
+                          //
+                          //   if(model.focusedDay == day){
+                          //     return model.fillEvent(controller.index);
+                          //   }else{
+                          //     return [] ;
+                          //   }
+                          //
+                          // },
+                          locale: Localizations.localeOf(context).languageCode,
+                          startingDayOfWeek: StartingDayOfWeek.sunday,
+                          calendarStyle: CalendarStyle(
+                            todayDecoration: BoxDecoration(
+                              color: theme.hintColor,
+                              shape: BoxShape.circle,
+                            ),
+                            selectedDecoration: BoxDecoration(
+                              color: theme.primaryColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          onDaySelected:
+                              (DateTime selectedDay, DateTime focusedDay) {
+                            onDaySelected(selectedDay, focusedDay, model);
+                          },
+
+                          onPageChanged: (focusedDay) {
+                            model.focusedDay = focusedDay;
+                          },
+                        ),
                       ],
                     )),
-                Visibility(
-                    visible: model.step2 == true,
-                    child: chooseBatch(theme, model)),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: Column(
+                    children: [
+                      Visibility(
+                          visible: model.filteredGrade.isNotEmpty,
+                          child: Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10, right: 10),
+                                child: Text(" # الصف ",
+                                    style: TextStyle(
+                                      color: theme.primaryColor,
+                                      fontSize: 20,
+                                    ),
+                                    textDirection: TextDirection.rtl),
+                              ))),
+                      Padding(
+                        padding: const EdgeInsets.only(top:5,right: 20, left: 20),
+                        child: model.filteredGrade.isNotEmpty
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.only(right: 20, left: 20),
+                                child: dropDown(theme, model, true),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(top: 40),
+                                child: noDataWidget(
+                                    "لا يوجد قائمة بهذا التاريخ يرجى اختيار تاريخ اخر ",
+                                    theme)),
+                      ),
+                      Visibility(
+                          visible: model.filteredGrade.isNotEmpty,
+                          child: Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 20, right: 10),
+                                child: Text(" # الشعبة ",
+                                    style: TextStyle(
+                                      color: theme.primaryColor,
+                                      fontSize: 20,
+                                    ),
+                                    textDirection: TextDirection.rtl),
+                              ))),
+                      Visibility(
+                          visible: model.filteredGrade.isNotEmpty,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top:5,right: 40, left: 40),
+                            child: dropDown(theme, model, false),
+                          )),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: SharedButton(
+                      buttonLabel: "حفظ",
+                      onClick: () {
+                        model.getAttendeeSheet().then((sheet) {
+                                              if (sheet.students != null &&
+                                                  sheet.students!.isNotEmpty) {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext context) =>
+                                                          FillAttendee(obj: sheet)),
+                                                );
+                                              } else {
+                                                SnackbarShare.showMessage(
+                                                    Strings.noAvailableSheet);
+                                              }
+                                            });
+
+                      },
+                      color: theme.primaryColor,
+                      canClick: true,
+                      msgCantClick: ''),
+                )
               ],
             ),
           ],
         ));
   }
 
-  Widget chooseGrade(ThemeData theme, ChooseModel model) {
-    return Padding(
-        padding: const EdgeInsets.only(top: 30, bottom: 50),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.65,
-          child: ListView.builder(
-              itemCount: model.filteredGrade.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () {
-                    model.setGradeSelected(model.filteredGrade[index].id!);
-                    model.setBatchListSelected(
-                        model.filteredGrade[index].batchs!);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.only(
-                        right: 20, left: 20, top: 10, bottom: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      border: (model.selectedGrade != 0 &&
-                              model.selectedGrade ==
-                                  model.filteredGrade[index].id)
-                          ? Border.all(color: Colors.green, width: 2)
-                          : Border.all(color: Colors.transparent, width: 0),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      model.filteredGrade[index].name.toString(),
-                      style: theme.textTheme.displayMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                );
-              }),
-        ));
-  }
 
-  Widget chooseBatch(ThemeData theme, ChooseModel model) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 50, bottom: 50),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: ListView.builder(
-            itemCount: model.batchList.length,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                onTap: () {
-                  model.setBatchSelected(model.batchList[index].id!);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.only(
-                      right: 20, left: 20, top: 10, bottom: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    border: (model.selectedBatch != 0 &&
-                            model.selectedBatch == model.batchList[index].id)
-                        ? Border.all(color: Colors.green, width: 2)
-                        : Border.all(color: Colors.transparent, width: 0),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    model.batchList[index].name.toString(),
-                    style: theme.textTheme.displayMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            }),
-      ),
-    );
-  }
 
   void onDaySelected(
       DateTime selectedDay, DateTime focusedDay, ChooseModel model) {
     if (!isSameDay(model.focusedDay, selectedDay)) {
-
       model.setDateSelected(focusedDay);
       print(model.focusedDay.day);
     }
+  }
+
+
+  Widget noDataWidget(String text, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      width: double.maxFinite,
+      margin: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: Offset(0, 1), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Text(
+        text,
+        style: theme.textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget dropDown(ThemeData theme, ChooseModel model, bool isGrade) {
+    return DropdownSearch<dynamic>(
+      popupProps: PopupProps.dialog(
+          showSearchBox: true,
+          fit: FlexFit.tight,
+          emptyBuilder: (context,String){
+            return Center(child: Text("يرجى اختيار الصف أولا"));
+          },
+          searchFieldProps: TextFieldProps(
+            decoration: InputDecoration(
+              hintText: Strings.search,
+              alignLabelWithHint: true,
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: theme.hintColor,
+                ),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: theme.hintColor,
+                ),
+              ),
+              hintStyle: TextStyle(color: Colors.black54),
+              prefixIcon: Icon(
+                Icons.search,
+                color: theme.hintColor,
+              ),
+            ),
+            textAlign: TextAlign.right,
+          ),
+          itemBuilder: (ctx, item, isSelected) {
+            return ListTile(
+                selected: isSelected,
+                title: Text(
+                  item.name.toString(),
+                  style: theme.textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+            );
+          }),
+      items: isGrade ? model.filteredGrade : model.batchList,
+      dropdownDecoratorProps:
+          DropDownDecoratorProps(textAlign: TextAlign.center),
+     dropdownButtonProps: DropdownButtonProps(color: theme.hintColor),
+     onChanged: (dynamic){
+       Future.delayed(Duration.zero, () {
+
+         if (mounted) {
+           if(isGrade){
+             GradeData a = dynamic as GradeData;
+             model.setGradeSelected(a);
+           }else{
+             Batchs a = dynamic as Batchs;
+             model.setBatchSelected(a.id!,a.name!);
+           }
+         }
+       });
+     },
+      selectedItem: isGrade ? model.selectedGrade : model.selectedBatchName,
+    );
   }
 }

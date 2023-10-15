@@ -83,6 +83,10 @@ class GradeData {
     }
     return data;
   }
+  @override
+  String toString() {
+    return name!;
+  }
 }
 
 class Batchs {

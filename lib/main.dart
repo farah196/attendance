@@ -4,6 +4,7 @@ import 'package:attendance/pages/login_page.dart';
 import 'package:attendance/pages/main_page.dart';
 import 'package:attendance/shared_widget/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'core/services/api_services.dart';
 import 'core/services/attendants_prefrence.dart';
@@ -17,7 +18,6 @@ void main() {
       title: 'A.I.C.S.K',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: const [
 
