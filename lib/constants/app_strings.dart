@@ -25,4 +25,14 @@ class Strings
   //static const String absentReasons = "يرجى تحديد سبب الغياب " ;
   static const String confirmSheet = "تأكيد القائمة";
   static const String dayOff = "عطلة رسمية";
+  static const String other = "أسباب أخرى";
+  static const String travel = "السفر";
+  static const String illness = "المرض";
+  static const String num_of_attendee = "عدد الحضور";
+  static const String num_of_absent = "عدد الغياب";
+  static const String confirm_sheet = "تم تأكيد القائمة";
+  static const String setDayOff = "تم تعيين هذا اليوم انه يوم عطلة";
+  static const String login_error = "البريد الالكتروني او كلمة السر غير صحيح";
+  static const String app_bar_title = "الحضور والغياب";
+  static const String logout = "خروج";
 }

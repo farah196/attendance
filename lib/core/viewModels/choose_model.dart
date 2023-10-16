@@ -1,10 +1,6 @@
 import 'package:attendance/core/model/grade_model.dart';
-import 'package:attendance/core/viewstate.dart';
 import 'package:intl/intl.dart';
-
-import '../../constants/app_strings.dart';
 import '../../locator.dart';
-import '../../shared_widget/snackbar.dart';
 import '../base_model.dart';
 import '../model/attendee_model.dart';
 import '../services/api_services.dart';
@@ -115,11 +111,6 @@ class ChooseModel extends BaseModel {
     notifyListeners();
   }
 
-  // setBatchListSelected(List<Batchs> list) {
-  //    batchList.clear();
-  //   batchList.addAll(list);
-  //   notifyListeners();
-  // }
   setBatchSelected(int select,String name) {
     selectedBatch = select;
     selectedBatchName = name;

@@ -1,6 +1,6 @@
 import 'package:attendance/core/model/attendee_model.dart';
 import 'package:attendance/core/viewstate.dart';
-
+import '../../constants/app_strings.dart';
 import '../../locator.dart';
 import '../base_model.dart';
 import '../services/api_services.dart';
@@ -9,7 +9,7 @@ class AttendeeVModel extends BaseModel {
   final ApiService _api = locator<ApiService>();
 
   List<String> selectedReason = [];
-  List<String> reasons = ["","المرض", "السفر", "عطلة رسمية", "أسباب أخرى"];
+  List<String> reasons = ["",Strings.illness, Strings.travel, Strings.dayOff, Strings.other];
   List<Students> filterStudents = [];
   List<Students> students = [];
   List<Students> selectedStudents = [];

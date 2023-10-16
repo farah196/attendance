@@ -16,7 +16,7 @@ import '../model/update_status.dart';
 import 'attendants_prefrence.dart';
 
 class ApiService {
-  static const endpoint = 'https://system.aicsk.edu.jo';
+  static const endpoint = 'https://testing.aicsk.edu.jo';
   static var auth = "";
   static var userID = "";
 
@@ -38,9 +38,9 @@ class ApiService {
       Map<String, dynamic> requestObject = {
         'jsonrpc': '2.0',
         'params': {
-          'db': "system",
-          'login': "mobile.app@aicsk.edu.jo",
-          'password': "0"
+          'db': "testing",
+          'login': email,
+          'password': password
         },
       };
       var response = await http.post(
@@ -92,7 +92,7 @@ class ApiService {
   Future<SelectModel> refreshList(String id,int sheetID) async {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
-      "params": {"user_id": int.parse(id),"sheet_id":sheetID}
+      "params": {'db': "testing","user_id": int.parse(id),"sheet_id":sheetID}
     };
 
     final response = await http.post(
@@ -108,6 +108,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
+        'db': "testing",
         "user_id": int.parse(id),
         "date": date,
       }
@@ -143,6 +144,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
+        'db': "testing",
         "user_id": int.parse(id),
         "date": date,
         "batch_id": batchID
@@ -162,6 +164,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
+        'db': "testing",
         "user_id": int.parse(id),
         "student_id": stdntID,
       }
@@ -179,6 +182,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
+        'db': "testing",
         "user_id": int.parse(id),
         "student_id": stdntID,
         "absent_reason": absentReason
@@ -198,6 +202,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
+        'db': "testing",
         "user_id": int.parse(id),
         "sheet_id": sheetId
       }
@@ -216,6 +221,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
+        'db': "testing",
         "user_id": int.parse(id),
         "sheet_id": sheetId
       }
@@ -233,6 +239,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
+        'db': "testing",
         "user_id": int.parse(id),
       }
     };

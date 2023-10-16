@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../constants/app_strings.dart';
 import '../core/services/attendants_prefrence.dart';
 import '../pages/login_page.dart';
 
@@ -15,7 +16,7 @@ class AppBarWidget {
 
   static PreferredSizeWidget mainAppBarSharedWidget() {
     return AppBar(
-title: Text("الحضور والغياب", style: TextStyle(color: Colors.white,fontSize: 18,fontFamily: 'Tajawal'),),
+title: Text(Strings.app_bar_title, style: TextStyle(color: Colors.white,fontSize: 18,fontFamily: 'Tajawal'),),
 
       leading: Visibility(
           visible: (Navigator.canPop(_context!) == true ? true : false) && _showBack == true,
@@ -39,10 +40,10 @@ title: Text("الحضور والغياب", style: TextStyle(color: Colors.white,
             return PopupMenuItem<String>(
               value: choice,
               child: Text(
-                "خروج",
+                Strings.logout,
                 style: TextStyle(
                     color: Colors.black38,
-                    fontFamily: 'Cairo',
+                    fontFamily: 'Tajawal',
                     fontSize: 13),
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,

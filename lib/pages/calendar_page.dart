@@ -1,23 +1,17 @@
 import 'package:attendance/core/viewModels/choose_model.dart';
 import 'package:attendance/pages/fill_attendee.dart';
-import 'package:attendance/shared_widget/curve_bottom.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import '../constants/app_strings.dart';
 import '../core/model/grade_model.dart';
 import '../core/viewstate.dart';
 import '../shared_widget/app_bar_widget.dart';
 import '../shared_widget/button_widget.dart';
 import '../shared_widget/circule_paint.dart';
-import '../shared_widget/curve_top.dart';
 import '../shared_widget/snackbar.dart';
-import '../shared_widget/text_field_widget.dart';
 import 'base_view.dart';
-
 import 'package:intl/date_symbol_data_local.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -194,7 +188,9 @@ class _CalendarPageState extends State<CalendarPage> {
                     ],
                   ),
                 ),
-                Padding(
+                Visibility(
+                  visible: model.filteredGrade.isNotEmpty,
+                  child:  Padding(
                   padding: const EdgeInsets.only(top: 15),
                   child: SharedButton(
                       buttonLabel: "حفظ",
@@ -217,7 +213,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       },
                       color: theme.primaryColor,
                       canClick: true,
-                      msgCantClick: ''),
+                      msgCantClick: '')),
                 )
               ],
             ),

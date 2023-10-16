@@ -1,6 +1,3 @@
-
-
-
 import 'package:attendance/core/viewstate.dart';
 import 'package:flutter/material.dart';
 

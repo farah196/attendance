@@ -228,7 +228,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                     width: 5,
                                   ),
                                   Text(
-                                    "عدد الحضور",
+                                    Strings.num_of_attendee,
                                     style: theme.textTheme.bodyLarge,
                                   ),
                                   const SizedBox(
@@ -250,7 +250,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                     width: 5,
                                   ),
                                   Text(
-                                    "عدد الغياب",
+                                    Strings.num_of_absent,
                                     style: theme.textTheme.bodyLarge,
                                   ),
                                   const SizedBox(
@@ -284,7 +284,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                         .then((value) {
                                       if (value == true) {
                                         SnackbarShare.showMessage(
-                                            "تم تأكيد القائمة");
+                                            Strings.confirmSheet);
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
@@ -311,7 +311,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                   model.setDayOff(widget.obj.id!).then((value) {
                                     if (value == true) {
                                       SnackbarShare.showMessage(
-                                          "تم تعيين هذا اليوم انه يوم عطلة");
+                                          Strings.setDayOff);
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(

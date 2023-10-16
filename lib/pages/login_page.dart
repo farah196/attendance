@@ -12,8 +12,6 @@ import '../shared_widget/curve_top.dart';
 import '../shared_widget/snackbar.dart';
 import '../shared_widget/text_field_widget.dart';
 import 'base_view.dart';
-import 'main_page.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -182,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
         );
 
       } else {
-        SnackbarShare.showMessage("البريد الالكتروني او كلمة السر غير صحيح");
+        SnackbarShare.showMessage(Strings.login_error);
       }
     });
   }

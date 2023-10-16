@@ -16,9 +16,6 @@ class LoginModel extends BaseModel {
 
   var auth;
 
-  // bool isFirst = ApiService.isFirstOpen;
-
-
 
   setAuth(String sessionID) {
     auth = sessionID;
