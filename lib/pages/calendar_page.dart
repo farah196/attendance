@@ -37,7 +37,7 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return BaseView<ChooseModel>(
-        onModelReady: (model) => model.setDateSelected(DateTime.now()),
+        onModelReady: (model) => model.initDateSelected(DateTime.now()),
         builder: (context, model, child) {
           return model.state == ViewState.busy
               ? Container(
@@ -193,7 +193,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   child:  Padding(
                   padding: const EdgeInsets.only(top: 15),
                   child: SharedButton(
-                      buttonLabel: "حفظ",
+                      buttonLabel: "تأكيد",
                       onClick: () {
                         model.getAttendeeSheet().then((sheet) {
                                               if (sheet.students != null &&

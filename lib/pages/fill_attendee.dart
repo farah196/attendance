@@ -107,7 +107,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                               value: model.selectedStudents
                                   .contains(model.filterStudents[index]),
                         secondary:    model.unSelectedStudents
-                            .contains(model.students[index])
+                            .contains(model.filterStudents[index])
                             ?  const Icon(Icons.cancel_rounded,color: Colors.redAccent,size: 20,)   :      const CircleAvatar(
                         backgroundColor: Colors.green,
                         radius: 8,
@@ -124,7 +124,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                 }
                               },
                               subtitle: model.unSelectedStudents
-                                      .contains(model.students[index])
+                                      .contains(model.filterStudents[index])
                                   ? Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -162,7 +162,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                                   .indexOf(value));
                                               model
                                                   .setAbsent(
-                                                      model.students[index].id!,
+                                                      model.filterStudents[index].id!,
                                                       rsn)
                                                   .then((success) {
                                                 if (success == false) {
@@ -257,7 +257,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                     width: 10,
                                   ),
                                   Text(
-                                    "${model.students.length - model.selectedStudents.length}",
+                                    "${model.filterStudents.length - model.selectedStudents.length}",
                                     style: TextStyle(color: Colors.redAccent,fontSize: 15,fontWeight: FontWeight.bold),
                                   ),
                                 ],

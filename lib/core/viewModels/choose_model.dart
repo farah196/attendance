@@ -1,14 +1,13 @@
 import 'package:attendance/core/model/grade_model.dart';
+import 'package:attendance/core/viewstate.dart';
 import 'package:intl/intl.dart';
 import '../../locator.dart';
 import '../base_model.dart';
 import '../model/attendee_model.dart';
 import '../services/api_services.dart';
 
-
 class ChooseModel extends BaseModel {
   final ApiService _api = locator<ApiService>();
-
 
   var selectedDate = "";
   List<GradeData> gradeList = [];
@@ -16,15 +15,16 @@ class ChooseModel extends BaseModel {
   DateTime focusedDay = DateTime.now();
   List<Batchs> batchList = [];
 
-  GradeData selectedGrade = GradeData(id: 00,name: '',batchs: []);
+  GradeData selectedGrade = GradeData(id: 00, name: '', batchs: []);
   int selectedBatch = 0;
   String selectedBatchName = "";
-  bool step0 = true ;
-  bool step1 = false ;
-  bool step2 = false ;
+  bool step0 = true;
+
+  bool step1 = false;
+
+  bool step2 = false;
 
   int currentStep = 0;
-
 
   Future getGrade() async {
     try {
@@ -46,13 +46,14 @@ class ChooseModel extends BaseModel {
 
   Future<Sheet> getAttendeeSheet() async {
     try {
-      var sheet = await _api.getAttendeeSheet(ApiService.userID, selectedDate,selectedBatch);
+      var sheet = await _api.getAttendeeSheet(
+          ApiService.userID, selectedDate, selectedBatch);
 
       if (sheet.result != null && sheet.result!.success! == true) {
-        if(sheet.result!.sheet!.isEmpty || sheet.result!.sheet![0].state == "done"){
+        if (sheet.result!.sheet!.isEmpty ||
+            sheet.result!.sheet![0].state == "done") {
           return Sheet();
-        }else{
-
+        } else {
           return sheet.result!.sheet![0];
         }
       } else {
@@ -60,7 +61,6 @@ class ChooseModel extends BaseModel {
 
         return Sheet();
       }
-
     } catch (e) {
       notifyListeners();
       return Sheet();
@@ -82,39 +82,40 @@ class ChooseModel extends BaseModel {
     notifyListeners();
   }
 
+  initDateSelected(DateTime date) {
+    setState(ViewState.busy);
+    setDateSelected(date);
+    setState(ViewState.idle);
+  }
 
   setDateSelected(DateTime date) {
     filteredGrade.clear();
     batchList.clear();
-    selectedGrade = GradeData(id: 00,name: '',batchs: []);
+    selectedGrade = GradeData(id: 00, name: '', batchs: []);
     selectedBatchName = "";
     focusedDay = date;
-    String formattedDate =
-    DateFormat('yyyy-MM-dd').format(date);
+    String formattedDate = DateFormat('yyyy-MM-dd').format(date);
 
     selectedDate = formattedDate;
     getGrade();
-
   }
 
   setGradeSelected(GradeData select) {
     batchList.clear();
+    selectedBatchName = "";
     selectedGrade = select;
-    for(var i in  filteredGrade){
-      if(select.id == i.id){
+    for (var i in filteredGrade) {
+      if (select.id == i.id) {
         batchList.addAll(i.batchs!);
         break;
       }
     }
-    print("4442");
-    print(batchList.length);
     notifyListeners();
   }
 
-  setBatchSelected(int select,String name) {
+  setBatchSelected(int select, String name) {
     selectedBatch = select;
     selectedBatchName = name;
     notifyListeners();
   }
-
 }
