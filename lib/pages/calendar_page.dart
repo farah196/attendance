@@ -27,7 +27,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   void initState() {
-    AppBarWidget.init(context, false);
+    AppBarWidget.init(context, false,"الحضور والغياب");
     initializeDateFormatting();
 
     super.initState();
@@ -198,6 +198,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         model.getAttendeeSheet().then((sheet) {
                                               if (sheet.students != null &&
                                                   sheet.students!.isNotEmpty) {
+                                                sheet.date = model.selectedDate;
                                                 Navigator.pushReplacement(
                                                   context,
                                                   MaterialPageRoute(

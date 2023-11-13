@@ -8,50 +8,58 @@ import '../pages/login_page.dart';
 class AppBarWidget {
   static BuildContext? _context;
   static bool? _showBack;
+  static String? _title;
 
-  static void init(BuildContext context,bool showBack) {
+  static void init(BuildContext context, bool showBack, String title) {
     _context = context;
     _showBack = showBack;
+    _title = title;
   }
 
   static PreferredSizeWidget mainAppBarSharedWidget() {
     return AppBar(
-title: Text(Strings.app_bar_title, style: TextStyle(color: Colors.white,fontSize: 18,fontFamily: 'Tajawal'),),
+      title: Text(
+        _title!,
+        style:
+            TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Tajawal'),
+      ),
 
       leading: Visibility(
-          visible: (Navigator.canPop(_context!) == true ? true : false) && _showBack == true,
+          visible: (Navigator.canPop(_context!) == true ? true : false) &&
+              _showBack == true,
           child: IconButton(
               icon:
-              const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                  const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
               onPressed: () {
                 if (Navigator.canPop(_context!) == true) {
-
                   Navigator.pop(_context!);
                 } else {
                   SystemNavigator.pop();
                 }
               })),
-      actions: [     PopupMenuButton<String>(
-        onSelected:((v){
-          handleClick();
-        }),
-        itemBuilder: (BuildContext context) {
-          return {'logout'}.map((String choice) {
-            return PopupMenuItem<String>(
-              value: choice,
-              child: Text(
-                Strings.logout,
-                style: TextStyle(
-                    color: Colors.black38,
-                    fontFamily: 'Tajawal',
-                    fontSize: 13),
-                textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
-              ),
-            );
-          }).toList();
-        },
-      ) ],
+      actions: [
+        PopupMenuButton<String>(
+          onSelected: ((v) {
+            handleClick();
+          }),
+          itemBuilder: (BuildContext context) {
+            return {'logout'}.map((String choice) {
+              return PopupMenuItem<String>(
+                value: choice,
+                child: Text(
+                  Strings.logout,
+                  style: TextStyle(
+                      color: Colors.black38,
+                      fontFamily: 'Tajawal',
+                      fontSize: 13),
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.rtl,
+                ),
+              );
+            }).toList();
+          },
+        )
+      ],
       automaticallyImplyLeading: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -64,7 +72,7 @@ title: Text(Strings.app_bar_title, style: TextStyle(color: Colors.white,fontSize
     );
   }
 
-  static  void handleClick() {
+  static void handleClick() {
     AttendantsSharedPreference.logout();
     Navigator.pushAndRemoveUntil(
         _context!,

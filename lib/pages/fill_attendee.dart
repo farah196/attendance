@@ -26,7 +26,7 @@ class _FillAttendeeState extends State<FillAttendee> {
 
   @override
   void initState() {
-    AppBarWidget.init(context, false);
+    AppBarWidget.init(context, false, " الحضور والغياب / ${widget.obj.date!}");
     SnackbarShare.init(context);
     super.initState();
   }
@@ -106,13 +106,22 @@ class _FillAttendeeState extends State<FillAttendee> {
                               ),
                               value: model.selectedStudents
                                   .contains(model.filterStudents[index]),
-                        secondary:    model.unSelectedStudents
-                            .contains(model.filterStudents[index])
-                            ?  const Icon(Icons.cancel_rounded,color: Colors.redAccent,size: 20,)   :      const CircleAvatar(
-                        backgroundColor: Colors.green,
-                        radius: 8,
-                        child:  Icon(Icons.done,color: Colors.white,size: 15,),
-                        ),
+                              secondary: model.unSelectedStudents
+                                      .contains(model.filterStudents[index])
+                                  ? const Icon(
+                                      Icons.cancel_rounded,
+                                      color: Colors.redAccent,
+                                      size: 20,
+                                    )
+                                  : const CircleAvatar(
+                                      backgroundColor: Colors.green,
+                                      radius: 8,
+                                      child: Icon(
+                                        Icons.done,
+                                        color: Colors.white,
+                                        size: 15,
+                                      ),
+                                    ),
                               onChanged: (bool? value) async {
                                 if (model.selectedStudents
                                     .contains(model.filterStudents[index])) {
@@ -157,12 +166,13 @@ class _FillAttendeeState extends State<FillAttendee> {
                                             model.setSelectedReason(
                                                 value!, index);
                                             if (value.isNotEmpty) {
-                                              String rsn = returnReasonKey(model
-                                                  .reasons
-                                                  .indexOf(value));
+                                              String rsn = returnReasonKey(
+                                                  model.reasons.indexOf(value));
                                               model
                                                   .setAbsent(
-                                                      model.filterStudents[index].id!,
+                                                      model
+                                                          .filterStudents[index]
+                                                          .id!,
                                                       rsn)
                                                   .then((success) {
                                                 if (success == false) {
@@ -221,9 +231,12 @@ class _FillAttendeeState extends State<FillAttendee> {
                                   const CircleAvatar(
                                     backgroundColor: Colors.green,
                                     radius: 8,
-                                    child:  Icon(Icons.done,color: Colors.white,size: 15,),
+                                    child: Icon(
+                                      Icons.done,
+                                      color: Colors.white,
+                                      size: 15,
+                                    ),
                                   ),
-
                                   const SizedBox(
                                     width: 5,
                                   ),
@@ -236,7 +249,10 @@ class _FillAttendeeState extends State<FillAttendee> {
                                   ),
                                   Text(
                                     model.selectedStudents.length.toString(),
-                                    style: TextStyle(color: Colors.green,fontSize: 15,fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -245,7 +261,11 @@ class _FillAttendeeState extends State<FillAttendee> {
                               ),
                               Row(
                                 children: [
-                                  const Icon(Icons.cancel_rounded,color: Colors.redAccent,size: 20,),
+                                  const Icon(
+                                    Icons.cancel_rounded,
+                                    color: Colors.redAccent,
+                                    size: 20,
+                                  ),
                                   const SizedBox(
                                     width: 5,
                                   ),
@@ -258,7 +278,10 @@ class _FillAttendeeState extends State<FillAttendee> {
                                   ),
                                   Text(
                                     "${model.filterStudents.length - model.selectedStudents.length}",
-                                    style: TextStyle(color: Colors.redAccent,fontSize: 15,fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -279,23 +302,11 @@ class _FillAttendeeState extends State<FillAttendee> {
                                     SnackbarShare.showMessage(
                                         Strings.absentReason);
                                   } else {
-                                    model
-                                        .confirmSheet(widget.obj.id!)
-                                        .then((value) {
-                                      if (value == true) {
-                                        SnackbarShare.showMessage(
-                                            Strings.confirmSheet);
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  const CalendarPage()),
-                                        );
-                                      } else {
-                                        SnackbarShare.showMessage(
-                                            Strings.systemError);
-                                      }
-                                    });
+                                    if (model.unSelectedStudents.isNotEmpty) {
+                                      showAbsentDialog(context, theme, model);
+                                    } else {
+                                      confirmSheet(model);
+                                    }
                                   }
                                 },
                                 color: theme.hintColor,
@@ -335,6 +346,101 @@ class _FillAttendeeState extends State<FillAttendee> {
                     )),
               ],
             )));
+  }
+
+  confirmSheet(AttendeeVModel model) {
+    model.confirmSheet(widget.obj.id!).then((value) {
+      if (value == true) {
+        SnackbarShare.showMessage(Strings.confirmSheet);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => const CalendarPage()),
+        );
+      } else {
+        SnackbarShare.showMessage(Strings.systemError);
+      }
+    });
+  }
+
+  showAbsentDialog(
+      BuildContext context, ThemeData theme, AttendeeVModel model) {
+    Widget cancelButton = TextButton(
+      child: Container(
+          width: MediaQuery.of(context).size.width * 0.18,
+          padding: const EdgeInsets.all(5),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border.all(color: theme.primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Text(
+            Strings.cancel,
+            style: TextStyle(color: Colors.black),
+          )),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget confirmButton = TextButton(
+      child: Container(
+          width: MediaQuery.of(context).size.width * 0.26,
+          padding: const EdgeInsets.all(5),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border.all(color: theme.primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Text(
+            Strings.confirmSheet,
+            style: TextStyle(color: Colors.black),
+          )),
+      onPressed: () {
+        confirmSheet(model);
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      scrollable: true,
+      title: const Text(Strings.absentSheet, textAlign: TextAlign.right),
+      content: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        width: double.maxFinite,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: ListView.builder(
+              itemCount: model.unSelectedStudents.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.09,
+                  child: Column(
+                    children: [
+                      Text(
+                        model.unSelectedStudents[index].name.toString(),
+                        style: theme.textTheme.displayMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      index != model.unSelectedStudents.length - 1
+                          ? Divider()
+                          : SizedBox(),
+                    ],
+                  ),
+                );
+              }),
+        ),
+      ),
+      actions: [cancelButton, confirmButton],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   String returnReasonKey(int index) {

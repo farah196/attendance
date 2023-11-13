@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
         );
 
       } else {
-        SnackbarShare.showMessage(Strings.login_error);
+       SnackbarShare.showMessage(Strings.login_error);
       }
     });
   }

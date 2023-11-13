@@ -60,8 +60,8 @@ class Sheet {
   String? name;
   String? state;
   List<Students>? students;
-
-  Sheet({this.id, this.name, this.state, this.students});
+  String? date;
+  Sheet({this.id, this.name, this.state, this.students,this.date});
 
   Sheet.fromJson(Map<String, dynamic> json) {
     id = json['id'];

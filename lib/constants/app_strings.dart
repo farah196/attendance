@@ -24,6 +24,7 @@ class Strings
   static const String absentReason = "يرجى تحديد سبب الغياب " ;
   //static const String absentReasons = "يرجى تحديد سبب الغياب " ;
   static const String confirmSheet = "تأكيد القائمة";
+  static const String absentSheet = "قائمة الغياب";
   static const String dayOff = "عطلة رسمية";
   static const String other = "أسباب أخرى";
   static const String travel = "السفر";

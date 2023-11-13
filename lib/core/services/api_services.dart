@@ -85,7 +85,6 @@ class ApiService {
       body: jsonEncode(data),
     );
     auth = userAuth;
-    var a = UpdateResult.fromJson(json.decode(response.body));
     return UpdateResult.fromJson(json.decode(response.body));
   }
 
