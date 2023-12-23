@@ -9,14 +9,18 @@ import 'dart:io';
 import '../../constants/app_strings.dart';
 import '../../shared_widget/snackbar.dart';
 import '../model/attendee_model.dart';
+import '../model/categoy_model.dart';
+import '../model/complaint.dart';
+import '../model/get_complaint.dart';
 import '../model/login_result.dart';
 import '../model/select_model.dart';
+import '../model/success_model.dart';
 import '../model/update_result.dart';
 import '../model/update_status.dart';
 import 'attendants_prefrence.dart';
 
 class ApiService {
-  static const endpoint = 'https://system.aicsk.edu.jo';
+  static const endpoint = 'https://testing.aicsk.edu.jo';
   static var auth = "";
   static var userID = "";
 
@@ -38,7 +42,7 @@ class ApiService {
       Map<String, dynamic> requestObject = {
         'jsonrpc': '2.0',
         'params': {
-          'db': "system",
+          "db":"testing",
           'login': email,
           'password': password
         },
@@ -91,7 +95,7 @@ class ApiService {
   Future<SelectModel> refreshList(String id,int sheetID) async {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
-      "params": {'db': "system","user_id": int.parse(id),"sheet_id":sheetID}
+      "params": {   "db":"testing","user_id": int.parse(id),"sheet_id":sheetID}
     };
 
     final response = await http.post(
@@ -107,7 +111,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
-        'db': "system",
+        "db":"testing",
         "user_id": int.parse(id),
         "date": date,
       }
@@ -143,7 +147,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
-        'db': "system",
+        "db":"testing",
         "user_id": int.parse(id),
         "date": date,
         "batch_id": batchID
@@ -163,7 +167,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
-        'db': "system",
+        "db":"testing",
         "user_id": int.parse(id),
         "student_id": stdntID,
       }
@@ -181,7 +185,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
-        'db': "system",
+        "db":"testing",
         "user_id": int.parse(id),
         "student_id": stdntID,
         "absent_reason": absentReason
@@ -201,7 +205,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
-        'db': "system",
+        "db":"testing",
         "user_id": int.parse(id),
         "sheet_id": sheetId
       }
@@ -220,7 +224,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
-        'db': "system",
+        "db":"testing",
         "user_id": int.parse(id),
         "sheet_id": sheetId
       }
@@ -238,7 +242,7 @@ class ApiService {
     Map<String, dynamic> data = {
       "jsonrpc": "2.0",
       "params": {
-        'db': "system",
+        "db":"testing",
         "user_id": int.parse(id),
       }
     };
@@ -251,4 +255,229 @@ class ApiService {
     var a = ReasonsModel.fromJson(json.decode(response.body));
     return ReasonsModel.fromJson(json.decode(response.body));
   }
+
+
+  Future<SelectModel> getSchool() async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {"user_id": int.parse(userID),  "db":"testing",}
+    };
+
+    final response = await http.post(
+      Uri.parse('$endpoint/user/select/school'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    return SelectModel.fromJson(json.decode(response.body));
+  }
+
+  Future<SelectModel> selectGrade(String schoolID) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {
+        "user_id": int.parse(userID),
+        "school_id": schoolID,
+        "type": "student",
+    "db":"testing",
+      }
+    };
+
+    final response = await http.post(
+      Uri.parse('$endpoint/user/select/grade'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    var a = SelectModel.fromJson(json.decode(response.body));
+    return SelectModel.fromJson(json.decode(response.body));
+  }
+
+  Future<CategoryModel> getCategory() async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {
+        "user_id": int.parse(userID),
+        "db":"testing",
+      }
+    };
+
+    final response = await http.post(
+      Uri.parse('$endpoint/user/get/categories'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    return CategoryModel.fromJson(json.decode(response.body));
+  }
+
+  Future<SelectModel> getStudents() async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {
+        "user_id": int.parse(userID),
+        "db":"testing",
+      }
+    };
+    final response = await http.post(
+      Uri.parse('$endpoint/user/get/students'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    var a = SelectModel.fromJson(json.decode(response.body));
+    return SelectModel.fromJson(json.decode(response.body));
+  }
+
+  Future<SuccessModel> addComplaint(
+      String desc,
+      String title,
+      String responsible,
+      int gradeID,
+      String priority,
+      String branchType,
+      int branchID,
+      int studentID,
+      bool allChild,
+      int categoryId,
+      int subcategory,
+      ) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {
+        "db":"testing",
+        "description": desc,
+        "title": title,
+        "responsible_group": responsible,
+        "grade_id": gradeID,
+        "priority": priority,
+        "branch_type": branchType,
+        "branch_id": branchID,
+        "student_id": studentID,
+        "all_childs": allChild,
+        "category_id": categoryId,
+        "subcategory_id": subcategory,
+        "other_categories": {"category_id": []}
+      }
+    };
+
+    final response = await http.post(
+      Uri.parse('$endpoint/user/add/complaint'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    var a = SuccessModel.fromJson(json.decode(response.body));
+    return SuccessModel.fromJson(json.decode(response.body));
+  }
+
+  Future<SuccessModel> editComplaint(
+      int complaintID,
+      String desc,
+      String title,
+      String responsible,
+      int gradeID,
+      String priority,
+      String branchType,
+      int branchID,
+      int studentID,
+      bool allChild,
+      int categoryId,
+      int subcategory,
+      ) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {
+        "db":"testing",
+        "complaint_id": complaintID,
+        "description": desc,
+        "title": title,
+        "responsible_group": responsible,
+        "grade_id": gradeID,
+        "priority": priority,
+        "branch_type": branchType,
+        "branch_id": branchID,
+        "student_id": studentID,
+        "all_childs": allChild,
+        "category_id": categoryId,
+        "subcategory_id": subcategory,
+        "other_categories": {"category_id": []}
+      }
+    };
+
+    final response = await http.post(
+      Uri.parse('$endpoint/user/edit/complaint'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    var a = SuccessModel.fromJson(json.decode(response.body));
+    return SuccessModel.fromJson(json.decode(response.body));
+  }
+
+  Future<GetComplaint> getComplaint(String state) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {
+        "db":"testing",
+        "user_id": int.parse(userID),
+        "state":state
+      }
+    };
+
+    final response = await http.post(
+      Uri.parse('$endpoint/user/get/complaints'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    var a = GetComplaint.fromJson(json.decode(response.body));
+    return GetComplaint.fromJson(json.decode(response.body));
+  }
+
+  Future<ComplaintModel> getComplaintDetails(int complaintID) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {  "db":"testing","complaint_id": complaintID}
+    };
+    final response = await http.post(
+      Uri.parse('$endpoint/user/get/complaint/details'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    return ComplaintModel.fromJson(json.decode(response.body));
+  }
+
+  Future<SuccessModel> setStartProgress(int complaintID) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {  "db":"testing","complaint_id": complaintID,"user_id": int.parse(userID),}
+    };
+    final response = await http.post(
+      Uri.parse('$endpoint/user/set/start_progress'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    return SuccessModel.fromJson(json.decode(response.body));
+  }
+
+  Future<SuccessModel> setResolved(int complaintID) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {  "db":"testing","complaint_id": complaintID,"user_id": int.parse(userID),}
+    };
+    final response = await http.post(
+      Uri.parse('$endpoint/user/set/resolve_complaint'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    return SuccessModel.fromJson(json.decode(response.body));
+  }
+
+  Future<SuccessModel> setClosed(int complaintID) async {
+    Map<String, dynamic> data = {
+      "jsonrpc": "2.0",
+      "params": {  "db":"testing","complaint_id": complaintID,"user_id": int.parse(userID),}
+    };
+    final response = await http.post(
+      Uri.parse('$endpoint/user/set/close_complaint'),
+      headers: headers(auth),
+      body: json.encode(data),
+    );
+    return SuccessModel.fromJson(json.decode(response.body));
+  }
+
 }

@@ -27,7 +27,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   void initState() {
-    AppBarWidget.init(context, false,"الحضور والغياب");
+    AppBarWidget.init( false,"الحضور والغياب");
     initializeDateFormatting();
 
     super.initState();
@@ -35,6 +35,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+
     ThemeData theme = Theme.of(context);
     return BaseView<ChooseModel>(
         onModelReady: (model) => model.initDateSelected(DateTime.now()),
@@ -78,7 +79,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     child: Column(
                       children: [
                         const SizedBox(
-                          height: 25,
+                          height: 15,
                         ),
                         Align(
                           alignment: Alignment.topRight,
@@ -91,9 +92,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+
                         TableCalendar(
                           firstDay: DateTime.utc(1990, 01, 01),
                           lastDay: DateTime.utc(2222, 01, 01),
@@ -134,7 +133,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       ],
                     )),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
+                  height: MediaQuery.of(context).size.height * 0.24,
                   child: Column(
                     children: [
                       Visibility(
@@ -143,11 +142,11 @@ class _CalendarPageState extends State<CalendarPage> {
                               alignment: Alignment.topRight,
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.only(top: 10, right: 10),
+                                    const EdgeInsets.only(top: 6, right: 10),
                                 child: Text(" # الصف ",
                                     style: TextStyle(
                                       color: theme.primaryColor,
-                                      fontSize: 20,
+                                      fontSize: 18,
                                     ),
                                     textDirection: TextDirection.rtl),
                               ))),
@@ -175,7 +174,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                 child: Text(" # الشعبة ",
                                     style: TextStyle(
                                       color: theme.primaryColor,
-                                      fontSize: 20,
+                                      fontSize: 18,
                                     ),
                                     textDirection: TextDirection.rtl),
                               ))),
@@ -190,9 +189,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 ),
                 Visibility(
                   visible: model.filteredGrade.isNotEmpty,
-                  child:  Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: SharedButton(
+                  child:  SharedButton(
                       buttonLabel: "تأكيد",
                       onClick: () {
                         model.getAttendeeSheet().then((sheet) {
@@ -214,7 +211,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       },
                       color: theme.primaryColor,
                       canClick: true,
-                      msgCantClick: '')),
+                      msgCantClick: ''),
                 )
               ],
             ),
@@ -319,4 +316,5 @@ class _CalendarPageState extends State<CalendarPage> {
       selectedItem: isGrade ? model.selectedGrade : model.selectedBatchName,
     );
   }
+
 }

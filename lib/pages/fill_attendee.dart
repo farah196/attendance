@@ -26,7 +26,7 @@ class _FillAttendeeState extends State<FillAttendee> {
 
   @override
   void initState() {
-    AppBarWidget.init(context, false, " الحضور والغياب / ${widget.obj.date!}");
+    AppBarWidget.init( false, " الحضور والغياب / ${widget.obj.date!}");
     SnackbarShare.init(context);
     super.initState();
   }
@@ -78,7 +78,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                   ),
                 ),
                 Expanded(
-                  flex: 5,
+                  flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 15, left: 15),
                     child: ListView.builder(
@@ -244,9 +244,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                     Strings.num_of_attendee,
                                     style: theme.textTheme.bodyLarge,
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
+
                                   Text(
                                     model.selectedStudents.length.toString(),
                                     style: TextStyle(

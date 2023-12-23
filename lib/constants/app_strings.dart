@@ -36,4 +36,20 @@ class Strings
   static const String login_error = "البريد الالكتروني او كلمة السر غير صحيح";
   static const String app_bar_title = "الحضور والغياب";
   static const String logout = "خروج";
+
+  static const String desc = "الوصف";
+
+  static const String edit = "تعديل";
+
+  static const String complaint = "الشكاوي";
+  static const String addComplaint = "تم اضافة الشكوى بنجاح" ;
+
+  static const String startProgress = "ابدأ المعالجة" ;
+
+  static const String resolved ="تم حلها";
+
+  static const String closed = "اغلاق";
+  static const String doneAction = "تمت العملية بنجاح";
+
+  static String editComplaint = "تم تعديل الشكوى بنجاح";
 }

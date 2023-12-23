@@ -8,7 +8,7 @@ class SharedEditText extends StatelessWidget {
   final bool? isObscureText;
   final Function? onChange;
   final Function? onSubmit;
-
+  final int? line;
   const SharedEditText({
     super.key,
     required this.textEditingController,
@@ -16,6 +16,7 @@ class SharedEditText extends StatelessWidget {
     required this.icon,
     this.fontSize,
     this.isObscureText,
+    this.line,
     this.onChange,
     this.onSubmit,
   });
@@ -35,6 +36,7 @@ class SharedEditText extends StatelessWidget {
         cursorColor: theme.hintColor,
         obscureText: isObscureText ?? false,
         style: theme.textTheme.bodyMedium,
+        maxLines: line == null ? 1 : line,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: label,
