@@ -20,13 +20,13 @@ class AddComplimentVm extends BaseModel {
   List<SelectData> studentsList = [];
   List<SelectData> filteredStudents = [];
 
-  late SelectData selectedStudent;
+  late SelectData selectedStudent = SelectData(id: 0, name: "");
 
   late TitleModel selectedTitle;
   late TitleModel selectedBranch;
   late TitleModel selectedResponsible;
   late CategoryData selectedCategories;
-  late SubCategories selectedSubCategories;
+  late SubCategories selectedSubCategories = SubCategories(id: 0, name: "");
   List<SubCategories> subCategories = [];
   List<CategoryData> categories = [];
   late CategoryData selectedOtherCategories;
@@ -34,12 +34,6 @@ class AddComplimentVm extends BaseModel {
   // List<CategoryData> otherCategories = [];
   late int priorityValue = 3;
   var isAllChild = false;
-
-  List<TitleModel> type = [
-    TitleModel(title: "مدرسة", key: "school"),
-    TitleModel(title: "روضة", key: "kindergarten"),
-    TitleModel(title: "حضانة", key: "nursery"),
-  ];
 
   setRating(int value) {
     priorityValue = value;
@@ -51,7 +45,7 @@ class AddComplimentVm extends BaseModel {
     notifyListeners();
   }
 
-  setSelectedSchool(SelectData school) async {
+  setSelectedSchool(SelectData school, int gradeID) async {
     selectedSchool = school;
     _api.selectGrade(school.id!.toString()).then((gradeData) {
       if (gradeData.result != null && gradeData.result!.success! == true) {
@@ -60,7 +54,16 @@ class AddComplimentVm extends BaseModel {
         if (gradeList.isEmpty) {
           selectedGrade = SelectData(id: 0, name: "");
         } else {
-          selectedGrade = gradeData.result!.selectData!.first;
+          if (gradeID != 0) {
+            for (var s in gradeList) {
+              if (gradeID == s.id) {
+                selectedGrade = s;
+                notifyListeners();
+              }
+            }
+          } else {
+            selectedGrade = gradeData.result!.selectData!.first;
+          }
         }
 
         notifyListeners();
@@ -132,25 +135,25 @@ class AddComplimentVm extends BaseModel {
     TitleModel(title: "الحضانة", key: "nursery", id: 3),
   ];
 
-  getStudent(int id) async {
-    var studentsData = await _api.getStudents();
-    if (studentsData.result != null && studentsData.result!.success! == true) {
-      for (var i in studentsData.result!.selectData!) {
-        if (id == i.id) {
-          setSelectedStudent(i);
-          _disposed = true;
-          break;
-        }
-      }
-      // selectedStudent = studentsList.first;
-    }
-  }
+  // getStudent(int id) async {
+  //   var studentsData = await _api.getStudents();
+  //   if (studentsData.result != null && studentsData.result!.success! == true) {
+  //     for (var i in studentsData.result!.selectData!) {
+  //       if (id == i.id) {
+  //         setSelectedStudent(i);
+  //         _disposed = true;
+  //         break;
+  //       }
+  //     }
+  //     // selectedStudent = studentsList.first;
+  //   }
+  // }
 
   getCategory(int id, int subID) async {
     var categoryData = await _api.getCategory();
     if (categoryData.result != null && categoryData.result!.success! == true) {
       for (var i in categoryData.result!.categories!) {
-        if (id == i.id) {
+        if (id != i.id) {
           // setSelectedCategories(i);
           selectedCategories = i;
           print(i.name);
@@ -191,7 +194,7 @@ class AddComplimentVm extends BaseModel {
 
       if (isEdit) {
         for (var c in branch) {
-          if (complaintObj.branchId == c.id) {
+          if (complaintObj.branchType! == c.key) {
             selectedBranch = c;
           }
         }
@@ -220,8 +223,18 @@ class AddComplimentVm extends BaseModel {
 
       if (schoolData.result != null && schoolData.result!.success! == true) {
         schoolList.addAll(schoolData.result!.selectData!);
-        setSelectedSchool(schoolList.first);
+
+        if (isEdit) {
+          for (var s in schoolList) {
+            if (complaintObj.branchId == s.id) {
+              setSelectedSchool(s, complaintObj.gradeId!);
+            }
+          }
+        } else {
+          setSelectedSchool(schoolList.first, 0);
+        }
       }
+
       if (categoryData.result != null &&
           categoryData.result!.success! == true) {
         categories = categoryData.result!.categories!;
@@ -240,7 +253,6 @@ class AddComplimentVm extends BaseModel {
           }
         } else {
           selectedCategories = categories.first;
-
           subCategories = categories.first.subCategories!;
           selectedSubCategories = subCategories.first;
         }
@@ -300,9 +312,7 @@ class AddComplimentVm extends BaseModel {
     return [];
   }
 
-  Future addComplaintData(
-    String desc
-  ) async {
+  Future addComplaintData(String desc) async {
     bool success = false;
     try {
       var complaintData = await _api.addComplaint(
@@ -312,7 +322,7 @@ class AddComplimentVm extends BaseModel {
           selectedGrade.id!,
           priorityValue.toString(),
           selectedBranch.key,
-          selectedBranch.id!,
+          selectedSchool.id!,
           selectedStudent.id!,
           isAllChild,
           selectedCategories.id!,
@@ -332,39 +342,39 @@ class AddComplimentVm extends BaseModel {
     }
     return success;
   }
-  Future editComplaintData(
-      int complaintID,
-      String desc
-      ) async {
+
+  Future editComplaintData(int complaintID, String desc) async {
     bool success = false;
-    try {
-      var complaintData = await _api.addComplaint(
-          desc,
-          selectedTitle.key,
-          selectedResponsible.key,
-          selectedGrade.id!,
-          priorityValue.toString(),
-          selectedBranch.key,
-          selectedBranch.id!,
-          selectedStudent.id!,
-          isAllChild,
-          selectedCategories.id!,
-          selectedSubCategories.id!);
+      try {
+    var complaintData = await _api.editComplaint(
+        complaintID,
+        desc,
+        selectedTitle.key,
+        selectedResponsible.key,
+        selectedGrade.id!,
+        priorityValue.toString(),
+        selectedBranch.key,
+        selectedSchool.id!,
+        selectedStudent.id!,
+        isAllChild,
+        selectedCategories.id!,
+        selectedSubCategories.id!);
 
-      if (complaintData.result != null &&
-          complaintData.result!.success! == true) {
-        success = true;
-      } else {
-        success = false;
-      }
+    if (complaintData.result != null &&
+        complaintData.result!.success! == true) {
+      success = true;
+    } else {
+      success = false;
+    }
 
-      notifyListeners();
+    notifyListeners();
     } catch (e) {
       success = false;
       notifyListeners();
     }
     return success;
   }
+
   @override
   void dispose() {
     _disposed = true;

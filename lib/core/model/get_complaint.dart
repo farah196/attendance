@@ -60,10 +60,8 @@ class Complaint {
   int? branchId;
   String? branchType;
   int? gradeId;
-  int? responsibleUserId;
   String? deadline;
   String? remainingTime;
-  int? parentId;
   int? studentId;
   bool? allChilds;
   int? categoryId;
@@ -80,10 +78,8 @@ class Complaint {
         this.branchId,
         this.branchType,
         this.gradeId,
-        this.responsibleUserId,
         this.deadline,
         this.remainingTime,
-        this.parentId,
         this.studentId,
         this.allChilds,
         this.categoryId,
@@ -99,11 +95,14 @@ class Complaint {
     branchId = json['branch_id'];
     branchType = json['branch_type'];
     gradeId = json['grade_id'];
-    responsibleUserId = json['responsible_user_id'];
     deadline = json['deadline'];
     remainingTime = json['remaining_time'];
-    parentId = json['parent_id'];
-    studentId = json['student_id'];
+    if(json['student_id'] == false){
+      studentId = 0;
+    }else{
+      studentId = json['student_id'];
+    }
+
     allChilds = json['all_childs'];
     categoryId = json['category_id'];
     subcategoryId = json['subcategory_id'];
@@ -120,11 +119,15 @@ class Complaint {
     data['branch_id'] = this.branchId;
     data['branch_type'] = this.branchType;
     data['grade_id'] = this.gradeId;
-    data['responsible_user_id'] = this.responsibleUserId;
+
     data['deadline'] = this.deadline;
     data['remaining_time'] = this.remainingTime;
-    data['parent_id'] = this.parentId;
     data['student_id'] = this.studentId;
+    if (this.studentId == false) {
+      data['student_id'] = 0;
+    }else{
+      data['student_id'] = this.studentId;
+    }
     data['all_childs'] = this.allChilds;
     data['category_id'] = this.categoryId;
     data['subcategory_id'] = this.subcategoryId;

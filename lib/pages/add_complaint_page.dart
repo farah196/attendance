@@ -45,9 +45,9 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
     final ThemeData theme = Theme.of(context);
 
     return BaseView<AddComplimentVm>(
-        onModelReady: (model) => model.getData(widget.isEdit,widget.complaintObj),
+        onModelReady: (model) =>
+            model.getData(widget.isEdit, widget.complaintObj),
         builder: (context, model, child) {
-
           return model.state == ViewState.busy
               ? Material(
                   child: Center(
@@ -58,32 +58,30 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
         });
   }
 
-  fillEditInfo(AddComplimentVm model) {
-
-    model.getStudent(widget.complaintObj.studentId!);
-
-    for (var i in model.title) {
-      if (widget.complaintObj.title == i.key) {
-        model.setSelectedTitle(i);
-      }
-    }
-    model.setRating(int.parse(widget.complaintObj.priority!));
-    for (var i in model.branch) {
-      if (widget.complaintObj.branchId == i.id) {
-        model.setSelectedBranch(i);
-      }
-      model.setIsAllChild(widget.complaintObj.allChilds!);
-    }
-    for (var i in model.responsible) {
-      if (widget.complaintObj.responsibleGroup == i.key) {
-        model.setSelectedResponsible(i);
-      }
-    }
-    // model.getCategory(widget.complaintObj.categoryId!,widget.complaintObj.subcategoryId!);
-  }
+  // fillEditInfo(AddComplimentVm model) {
+  //   model.getStudent(widget.complaintObj.studentId!);
+  //
+  //   for (var i in model.title) {
+  //     if (widget.complaintObj.title == i.key) {
+  //       model.setSelectedTitle(i);
+  //     }
+  //   }
+  //   model.setRating(int.parse(widget.complaintObj.priority!));
+  //   for (var i in model.branch) {
+  //     if (widget.complaintObj.branchId == i.id) {
+  //       model.setSelectedBranch(i);
+  //     }
+  //     model.setIsAllChild(widget.complaintObj.allChilds!);
+  //   }
+  //   for (var i in model.responsible) {
+  //     if (widget.complaintObj.responsibleGroup == i.key) {
+  //       model.setSelectedResponsible(i);
+  //     }
+  //   }
+  //   // model.getCategory(widget.complaintObj.categoryId!,widget.complaintObj.subcategoryId!);
+  // }
 
   Widget mainWidget(ThemeData theme, AddComplimentVm model) {
-
     String studentName = (model.selectedStudent.name == null ||
             model.selectedStudent.name!.isEmpty)
         ? 'اختر الطالب'
@@ -186,7 +184,7 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
                             //   color: theme.primaryColor,
                             // ),
                             onChanged: (SelectData? value) {
-                              model.setSelectedSchool(value!);
+                              model.setSelectedSchool(value!,0);
                             },
                             items: model.schoolList
                                 .map<DropdownMenuItem<SelectData>>(
@@ -316,10 +314,6 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
                         elevation: 16,
                         alignment: Alignment.topRight,
                         style: const TextStyle(color: Colors.black38),
-                        // underline: Container(
-                        //   height: 2,
-                        //   color: theme.primaryColor,
-                        // ),
                         onChanged: (SelectData? value) {
                           model.setSelectedGrade(value!);
                         },
@@ -563,7 +557,7 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
                   width: MediaQuery.of(context).size.width * 0.45,
                   height: MediaQuery.of(context).size.height * 0.05,
                   child: SharedButton(
-                    buttonLabel: widget.isEdit?"تعديل":'اضافة',
+                    buttonLabel: widget.isEdit ? "تعديل" : 'اضافة',
                     onClick: () async {
                       if (descController.text.isEmpty ||
                           model.selectedTitle.title.isEmpty ||
@@ -575,10 +569,9 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
                           model.selectedSubCategories.name == null) {
                         SnackbarShare.showMessage(Strings.emptyField);
                       } else {
-
-                        if(widget.isEdit){
-                          bool success =
-                          await model.editComplaintData(widget.complaintObj.id!,descController.text);
+                        if (widget.isEdit) {
+                          bool success = await model.editComplaintData(
+                              widget.complaintObj.id!, descController.text);
                           if (success) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -600,10 +593,9 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
                           } else {
                             SnackbarShare.showMessage(Strings.systemError);
                           }
-
-                        }else{
+                        } else {
                           bool success =
-                          await model.addComplaintData(descController.text);
+                              await model.addComplaintData(descController.text);
                           if (success) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -626,7 +618,6 @@ class _AddComplaintPageState extends State<AddComplaintPage> {
                             SnackbarShare.showMessage(Strings.systemError);
                           }
                         }
-
                       }
                     },
                     color: theme.primaryColor,

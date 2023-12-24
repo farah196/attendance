@@ -5,6 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../constants/app_strings.dart';
 import '../core/viewModels/attendee_v_model.dart';
 import '../core/viewstate.dart';
+import '../main.dart';
 import '../shared_widget/app_bar_widget.dart';
 import '../shared_widget/button_widget.dart';
 import '../shared_widget/snackbar.dart';
@@ -26,7 +27,7 @@ class _FillAttendeeState extends State<FillAttendee> {
 
   @override
   void initState() {
-    AppBarWidget.init( false, " الحضور والغياب / ${widget.obj.date!}");
+    AppBarWidget.init(false, " الحضور والغياب / ${widget.obj.date!}");
     SnackbarShare.init(context);
     super.initState();
   }
@@ -244,7 +245,6 @@ class _FillAttendeeState extends State<FillAttendee> {
                                     Strings.num_of_attendee,
                                     style: theme.textTheme.bodyLarge,
                                   ),
-
                                   Text(
                                     model.selectedStudents.length.toString(),
                                     style: TextStyle(
@@ -303,7 +303,7 @@ class _FillAttendeeState extends State<FillAttendee> {
                                     if (model.unSelectedStudents.isNotEmpty) {
                                       showAbsentDialog(context, theme, model);
                                     } else {
-                                      confirmSheet(model);
+                                      confirmSheet(model,theme);
                                     }
                                   }
                                 },
@@ -346,15 +346,15 @@ class _FillAttendeeState extends State<FillAttendee> {
             )));
   }
 
-  confirmSheet(AttendeeVModel model) {
+  confirmSheet(AttendeeVModel model,ThemeData theme) {
     model.confirmSheet(widget.obj.id!).then((value) {
       if (value == true) {
-        SnackbarShare.showMessage(Strings.confirmSheet);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => const CalendarPage()),
+          MaterialPageRoute(builder: (BuildContext context) => const CalendarPage()),
         );
+      //  SnackbarShare.showMessage(Strings.confirmSheet);
+        showConfirmDialog( theme);
       } else {
         SnackbarShare.showMessage(Strings.systemError);
       }
@@ -394,7 +394,7 @@ class _FillAttendeeState extends State<FillAttendee> {
             style: TextStyle(color: Colors.black),
           )),
       onPressed: () {
-        confirmSheet(model);
+        confirmSheet(model,theme);
       },
     );
     // set up the AlertDialog
@@ -439,6 +439,49 @@ class _FillAttendeeState extends State<FillAttendee> {
         return alert;
       },
     );
+  }
+
+  showConfirmDialog(ThemeData theme) {
+
+    AlertDialog alert = AlertDialog(
+      scrollable: true,
+      title:  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+              onPressed: () {
+                navigatorKey.currentState!.pop();
+              },
+              icon: Icon(Icons.close)),
+          Text(Strings.confirmSheet, textAlign: TextAlign.right),
+        ],
+      ),
+      content: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: double.maxFinite,
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Image.asset("assets/images/confirm.png"),
+              Text("تم تأكيد القائمة بنجاح",style: theme.textTheme.displayMedium,),
+            ],
+          )),
+      actions: [],
+
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+
+
+
+
+
+
   }
 
   String returnReasonKey(int index) {
